@@ -1,0 +1,145 @@
+/* **********************************
+		CSS for viewlog.php
+************************************* */
+
+.box1{
+/* font-family:"Courier New", Courier, monospace; */
+font-family: Arial;
+font-size:12pt;
+color:#069;
+background:#fff;
+min-width:900px;
+}
+
+table.tbl{
+border-collapse: collapse;
+border:1px solid #ccc;
+}
+
+table.tbl td, table.tbl tr.a td{
+border:1px solid #ccc;
+padding:0 10px 0 10px;
+background:#def;
+white-space:nowrap;
+}
+
+a.res, a.blk, a.unblk, p.blk, p.ublk{
+display:inline-block;
+margin-top:3px;
+width:16px;
+height:16px;
+}
+
+a.res{ background-image:url("../img/search-icon-color2.png"); }
+
+a.blk{
+background-image:url("../img/checkbox-color1.gif");
+background-position:16px 0px;
+}
+a.unblk{ background-image:url("../img/checkbox-color1.gif"); }
+
+p.blk, p.ublk{
+background-image:url("../img/circle-red1.png");
+color:#fff;
+font-weight:bold;
+font-size:13px;
+font-family:"Courier New", Courier, monospace;
+margin-bottom:0px;
+text-align:center;
+line-height:16px;
+vertical-align:middle;
+}
+
+p.ublk{ background-image:url("../img/circle-green1.png"); }
+
+table.tbl td.cnt{
+text-align:center;
+}
+
+table.tbl td.u{
+text-align:right;
+}
+
+table.tbl tr.a td{
+background:#eff;
+}
+
+table.tnav{
+border-collapse: collapse;
+margin:20px 0 20px 30px;
+border:1px dotted #ccc;
+}
+
+table.tnav td{
+background:#eef;
+padding:5px;
+}
+
+table.tnav td.l{
+text-align:right;
+}
+
+table.tnav td.v{
+}
+
+table.tnav td.v select, table.tnav td.v input{
+width:100%;
+color:#069;
+}
+
+table.tnav td.s{
+padding:0 10px 0 10px;
+}
+
+
+/* **********************************
+		CSS for modlist.php
+************************************* */
+
+table.t1{
+border-collapse: collapse;
+border:1px solid #ccc;
+color:#069;
+width:400px;
+font-family: Arial;
+font-size:12pt;
+
+}
+
+table.t1 td{
+border:1px solid #ccc;
+padding:0;
+background:#def;
+padding: 5px 10px 5px 5px;
+}
+
+table.t1 td textarea{
+width:100%;
+min-width:100%;
+min-height:100px;
+background:#eff;
+}
+
+
+/* **********************************
+		CSS for modlist.php
+************************************* */
+
+table.t2{
+border-collapse: collapse;
+border:1px solid #ccc;
+margin-top:20px;
+}
+
+table.t2 td{
+border:1px solid #ccc;
+padding:0 10px 0 10px;
+background:#def;
+white-space:nowrap;
+}
+
+table.t2 td.lb{
+text-align:right;
+}
+
+
