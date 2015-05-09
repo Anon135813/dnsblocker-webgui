@@ -19,18 +19,18 @@
 <h1>HOW TO GUIDE:</h1>
 
 <h2>Ramdisk and dnsmasq log file</h2>
-<p>dnsmasq daemon need to be configured so it logs all queries. This can be done by editing the /etc/dnsmasq.conf file. the follwing two line needed to be added.</p>
+<p>dnsmasq daemon need to be configured so that it logs all queries. This can be done by editing the /etc/dnsmasq.conf file. the follwing two line needed to be added.</p>
 <pre>
 log-queries
 log-facility=/mnt/ramdisk/dnsmasq-log.txt
 </pre>
 
 <p>It is possible to create a small ramdrive (about 5 or 10MB) and configure the dnsmasq daemon write its logfile into the ramdrive using the "log-facility=" option in /etc/dnsmasq.conf.
-A ramdrive can be created using command</p><pre> "mount -t tmpfs -o size=10M tmpfs /mnt/ramdisk"</pre>
+A ramdrive can be created by using the command:</p><pre> "mount -t tmpfs -o size=10M tmpfs /mnt/ramdisk"</pre>
 
 
 <h2>Cron task and Updating the dnsgui/inc/dnslog.db database from dnsmasq log file</h2>
-<p>I have wrote an php script (/dnsgui/inc/update-db-dnslog.php) that reads and does some analysis and enter data into the dnslog table of the database. This task can be automated by creating a corn task.
+<p>I have wrote a php script (/dnsgui/inc/update-db-dnslog.php) that reads and does some analysis and enter data into the dnslog table of the database. This task can be automated by creating a corn task.
 crontab can be edited by typing "crontab -e" in terminal window.</p>
 <pre>*/30 * * * * /usr/sbin/update-dns-db.sh</pre>
 <p>Adding the above line at the bottom of the crontab file will run the script (update-dns-db.sh) every 30 minutes.
