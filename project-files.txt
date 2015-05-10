@@ -1,33 +1,25 @@
-=========================
-The "dnsgui" Directory:
-=========================
-
 dnsgui/
-│
-├── js
-│
 ├── css
 │   └── dnsblocker-webgui-style-01.css
-│
 ├── img
+│   ├── block-icon-color1.png
 │   ├── checkbox-color1.gif
 │   ├── circle-green1.png
 │   ├── circle-red1.png
-│   └── search-icon-color2.png
-│
+│   ├── search-icon-color2.png
+│   └── unblock-icon-color1.png
 ├── inc
 │   ├── dnslog.db
 │   ├── global-var-inc.php
 │   ├── update-blocklist-conf-files.php
 │   ├── update-db-blocklist.php
 │   └── update-db-dnslog.php
-│
 ├── index.php
 ├── modlist.php
 ├── test.php
 └── viewlog.php
 
-The directory "dnsgui" needs to be put inside your webservers "document-root" directory. In my case, on a default lighttpd install it was '/var/www'. You can find your document-root directory true location in /etc/lighttpd.d/lighttpd.conf file.
+The directory "dnsgui/" needs to be put inside your webservers "document-root" directory. In my case, on a default lighttpd install it was '/var/www'. You can find your document-root directory true location in /etc/lighttpd.d/lighttpd.conf file.
 
 
 

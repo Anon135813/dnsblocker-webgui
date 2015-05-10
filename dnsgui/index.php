@@ -16,6 +16,13 @@ global $dnslogfile;
 
 
 
+// the followings cannot be use without setting up a "sudoer" entry for
+// www-data user for the $phpsudotaskfile shell script file.
+// At this point in time the possible location for the $phpsudotaskfile
+// script file is undecided. A guide need to be written about it before
+// I can upload the script file for users to use them.
+
+/*
 if(isset($_GET['a'])){
 
 	if($_GET['a']==1){
@@ -34,6 +41,7 @@ if(isset($_GET['a'])){
 	header('Location: index.php');
 	exit();
 }
+*/
 
 ?>
 <!DOCTYPE html>
