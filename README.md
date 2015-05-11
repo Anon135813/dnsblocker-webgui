@@ -89,7 +89,17 @@ dnsgui/
 </pre>
 <p>The directory "dnsgui/" needs to be put inside your webservers "document-root" directory. In my case, on a default lighttpd install it was '/var/www'. You can find your document-root directory true location in /etc/lighttpd.d/lighttpd.conf file.</p>
 
-
+<h2>About auto-list and custom-list:</h2>
+<p>According to the /etc/dnsmasq.d/README file, dnsmasq by default will read all files in '/etc/dnsmasq.d/' directory. So it is possible to create just one single file with all the list of blocked domain addresses. But this webgui follows the original pi-hole convention and separates all the blocked domain addresses into two distinct list (auto-list and custom-list). According to the pi-hole convention, all the blocked domain addresses that are acquired as a part of automated script from web sources are stored in the adblock.conf (aka auto-list, Op=1 in webgui). All the blocked domain addresses added by the user manually goes into the adblock-custom.conf (aka custom-list. Op=2 in webgui). When webgui regenerates the '.conf' files, it appropriatly puts all the automically acquired blocked addresses into auto-list (can be any filename discribe in dnsgui/inc/global-var-inc.php) and puts all the manually blocked addresses into custom-list (can also be any filename discribe in dnsgui/inc/global-var-inc.php).</p>
+<h2>About sudoer and fire permissions requirement for dnsgui:</h2>
+<p>on a default lighttpt and php-cgi install dnsblocker-webgui runs as 'www-data' user under linux. In order for the webgui to carry out certain operation 'www-data' user will require read and write permissions to certain files. Without sufficient permissions those operations will fail.
+<ul>
+	<li>For almost all operation 'www-data' require both read and write permissions to “dnsgui/inc/dnslog.db” file.</li>
+	<li>In order to regenerating '.conf' files in the '/etc/dnsmasq.d' directory, 'www-data' user needs read and write permissions to auto-list and custom-list '.conf' files.</li>
+	<li>In order to empty the dnsmasq log file, 'www-data' user need read and write permissions to that file.</li>
+</ul>
+'www-data' user also required a sudoer entry with 'NOPASSWD' option to “dnsblocker-phpsudotask.sh” script file. Please read appropriate documents and guide to learn how to add sudoer entry into your linux. Generally it is does via the “visudo” command and by adding the following line. This sudoer entry will allow dnsgui to restart dnsmasq daemon as sudo from php scripts.</p>
+<pre>www-data ALL=(ALL) NOPASSWD: /home/pi/dnsblocker-phpsudotask.sh</pre>
 
 
 
