@@ -16,32 +16,38 @@ global $dnslogfile;
 
 
 
-// the followings cannot be use without setting up a "sudoer" entry for
-// www-data user for the $phpsudotaskfile shell script file.
-// At this point in time the possible location for the $phpsudotaskfile
-// script file is undecided. A guide need to be written about it before
-// I can upload the script file for users to use them.
-
-/*
 if(isset($_GET['a'])){
 
 	if($_GET['a']==1){
-		//reboot dnsmasq
+		//restart dnsmasq daemon
 		exec("sudo {$phpsudotaskfile} --restart-dnsmasq");
+		sleep(1);
 	}
 	else if($_GET['a']==2){
 		// write conf
 		exec("sudo {$phpsudotaskfile} --write-blcoklist-conf");
 	}
-	else if($_GET['a']==1){
-		//reboot dnsmasq
-		exec("sudo {$phpsudotaskfile} --status-lighttpd");
+	else if($_GET['a']==4){
+		require('./inc/update-blocklist-conf-files.php');
+		ExportConfAutolist();
 	}
+	else if($_GET['a']==5){
+		require('./inc/update-blocklist-conf-files.php');
+		ExportConfCustomlist();
+	}
+	else if($_GET['a']==6){
+		require('./inc/update-blocklist-conf-files.php');
+		ExportConfBothlist();
+	}
+
+	//else if($_GET['a']==3){
+		//reboot dnsmasq
+		//exec("sudo {$phpsudotaskfile} --status-lighttpd");
+	//}
 
 	header('Location: index.php');
 	exit();
 }
-*/
 
 ?>
 <!DOCTYPE html>
@@ -52,10 +58,13 @@ if(isset($_GET['a'])){
 </head>
 <body>
 <div class="box1">
+<ul class="ctrl1">
+	<li><a href="?a=1">Restart dnsmasq daemon</a></li>
+	<li><a href="?a=4">Regenerate auto-list conf file</a></li>
+	<li><a href="?a=5">Regenerate custom-list conf file</a></li>
+	<li><a href="?a=6">Regenerate both (custom and auto list) conf file</a></li>
+</ul>
 <?php
-// <a href="?a=1">Restart dnsmasq service</a><br/>
-// <a href="?a=3">Restart lighttpd service</a><br/>
-// <a href="?a=2">Regenerate blocklist conf files</a><br/>
 
 function KeyValTbl($keyValArray){
 

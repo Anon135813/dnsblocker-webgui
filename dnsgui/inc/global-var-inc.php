@@ -2,6 +2,10 @@
 
 // list of all globally used variables.
 
+// ip address of the host that is running the dnsmasq and webgui
+// this will be use to generate the block list ".conf" files
+$GLOBALS['hostaddress'] = '192.168.1.8';
+
 // database filename and location path.
 $GLOBALS['dbpath'] 		= '/var/www/dnsgui/inc/';
 $GLOBALS['dbfilename'] 	= 'dnslog.db';
@@ -31,15 +35,15 @@ $GLOBALS['phpsudotaskfilename'] = 'dnsblocker-phpsudotask.sh';
 $GLOBALS['phpsudotaskfile'] 	= $GLOBALS['phpsudotaskpath'] . $GLOBALS['phpsudotaskfilename'];
 
 
+// filename and location of the auto-list
 $GLOBALS['adlistpath']		= '/etc/dnsmasq.d/';
 $GLOBALS['adlistfilename']	= 'adlist.conf';
 $GLOBALS['adlistfile']		= $GLOBALS['adlistpath'] . $GLOBALS['adlistfilename'];
 
-
+// filename and the location of the custom-list
 $GLOBALS['adlistCustompath']		= '/etc/dnsmasq.d/';
 $GLOBALS['adlistCustomfilename']	= 'adlist-custom.conf';
 $GLOBALS['adlistCustomfile']		= $GLOBALS['adlistCustompath'] . $GLOBALS['adlistCustomfilename'];
-
 
 
 // sometimes helps when php project are cross platform.
