@@ -19,37 +19,61 @@ global $dnslogfile;
 if(isset($_GET['a'])){
 
 	if($_GET['a']==1){
+
 		//restart dnsmasq daemon
 		exec("sudo {$phpsudotaskfile} --restart-dnsmasq");
 		sleep(1);
+
+		header('Location: index.php');
+
 	}
-	//else if($_GET['a']==2){
-		// write conf
-		// exec("sudo {$phpsudotaskfile} --write-blcoklist-conf");
-	//}
 	else if($_GET['a']==4){
+
 		require('./inc/update-blocklist-conf-files.php');
+
+		// Sending reloading header causes the client browser to
+		// reload a fresh index.php page while rest of this script
+		// continue executing in background on the server.
+		// this makes the client browser feel more responsive.
+		// also cleans up the unwanted url params from browser url-bar
+		header('Location: index.php');
+
+		// export the auto-list
 		ExportConfAutolist();
 	}
 	else if($_GET['a']==5){
+
 		require('./inc/update-blocklist-conf-files.php');
+
+		header('Location: index.php');
+
+		// export the auto-list
 		ExportConfCustomlist();
 	}
 	else if($_GET['a']==6){
+
 		require('./inc/update-blocklist-conf-files.php');
+
+		header('Location: index.php');
+
+		// export the both-list
 		ExportConfBothlist();
 	}
 	else if($_GET['a']==7){
+
 		require('./inc/update-db-dnslog-inc.php');
-		ImportDnsmasqLog();
+
+		header('Location: index.php');
+
+		// export the both-list
+		$msg = ImportDnsmasqLog();
+		$f = fopen($dnslogfile, 'w');
+		if($f!=FALSE){
+			fwrite($f, $msg);
+			fclose($f);
+		}
 	}
 
-	//else if($_GET['a']==3){
-		//reboot dnsmasq
-		//exec("sudo {$phpsudotaskfile} --status-lighttpd");
-	//}
-
-	header('Location: index.php');
 	exit();
 }
 
@@ -66,7 +90,7 @@ if(isset($_GET['a'])){
 	<li><a href="?a=1">Restart dnsmasq daemon</a></li>
 	<li><a href="?a=4">Regenerate auto-list conf file</a></li>
 	<li><a href="?a=5">Regenerate custom-list conf file</a></li>
-	<li><a href="?a=6">Regenerate both (custom and auto list) conf file</a></li>
+	<li><a href="?a=6">Regenerate both conf file</a></li>
 	<li><a href="?a=7">Import most recent dnsmasq logs</a></li>
 </ul>
 <?php
