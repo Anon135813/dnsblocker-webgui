@@ -7,7 +7,7 @@
 $GLOBALS['hostaddress'] = '192.168.1.8';
 
 // database filename and location path.
-$GLOBALS['dbpath'] 		= '/var/www/dnsgui/inc/';
+$GLOBALS['dbpath'] 		= '/var/www/dnsgui/inc/db/';
 $GLOBALS['dbfilename'] 	= 'dnslog.db';
 $GLOBALS['dbfile'] 		= $GLOBALS['dbpath'] . $GLOBALS['dbfilename'];
 

@@ -23,10 +23,10 @@ if(isset($_GET['a'])){
 		exec("sudo {$phpsudotaskfile} --restart-dnsmasq");
 		sleep(1);
 	}
-	else if($_GET['a']==2){
+	//else if($_GET['a']==2){
 		// write conf
-		exec("sudo {$phpsudotaskfile} --write-blcoklist-conf");
-	}
+		// exec("sudo {$phpsudotaskfile} --write-blcoklist-conf");
+	//}
 	else if($_GET['a']==4){
 		require('./inc/update-blocklist-conf-files.php');
 		ExportConfAutolist();
@@ -38,6 +38,10 @@ if(isset($_GET['a'])){
 	else if($_GET['a']==6){
 		require('./inc/update-blocklist-conf-files.php');
 		ExportConfBothlist();
+	}
+	else if($_GET['a']==7){
+		require('./inc/update-db-dnslog-inc.php');
+		ImportDnsmasqLog();
 	}
 
 	//else if($_GET['a']==3){
@@ -63,6 +67,7 @@ if(isset($_GET['a'])){
 	<li><a href="?a=4">Regenerate auto-list conf file</a></li>
 	<li><a href="?a=5">Regenerate custom-list conf file</a></li>
 	<li><a href="?a=6">Regenerate both (custom and auto list) conf file</a></li>
+	<li><a href="?a=7">Import most recent dnsmasq logs</a></li>
 </ul>
 <?php
 
