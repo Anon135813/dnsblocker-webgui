@@ -204,6 +204,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Apply Changes'){
 <!DOCTYPE html>
 <html>
 <head>
+<meta name = "viewport" content = "width = 420">
 <title>MOD LIST</title>
 <link rel="stylesheet" type="text/css" media="all" href="./css/dnsblocker-webgui-style-01.css" />
 </head>

@@ -16,9 +16,9 @@ global $colOp;
 // start of php blcok1
 
 if(isset($_GET['a']) == FALSE || $_GET['a']<1 || $_GET['a']>6)  $_GET['a']=1;
-if(isset($_GET['b']) == FALSE || $_GET['b']<1 || $_GET['b']>3)  $_GET['b']=1;
-if(isset($_GET['c']) == FALSE || $_GET['c']<1 || $_GET['c']>20) $_GET['c']=10;
-if(isset($_GET['d']) == FALSE || $_GET['d']<1 || $_GET['d']>9)  $_GET['d']=1;
+if(isset($_GET['b']) == FALSE || $_GET['b']<1 || $_GET['b']>3)  $_GET['b']=2;
+if(isset($_GET['c']) == FALSE || $_GET['c']<1 || $_GET['c']>20) $_GET['c']=11;
+if(isset($_GET['d']) == FALSE || $_GET['d']<1 || $_GET['d']>9)  $_GET['d']=7;
 if(isset($_GET['e']) == FALSE || $_GET['e']<1 || $_GET['e']>3)  $_GET['e']=2;
 
 function f1($a, $b){
@@ -187,23 +187,24 @@ else if($_GET['c'] == 19) $n=2999;
 else $n=10;
 
 
-// ORDER by column
-     if($_GET['d'] == 1) $col="A.{$colHit}";
-else if($_GET['d'] == 2) $col="A.{$colOp}";
-else if($_GET['d'] == 3) $col="REVERSE(A.{$colUrl})";
-else if($_GET['d'] == 4) $col="LENGTH(A.{$colUrl})";
-else if($_GET['d'] == 5) $col="A.{$colUrl}";
-else if($_GET['d'] == 6) $col="STRTIME(A.{$colT1})";
-else if($_GET['d'] == 7) $col="STRTIME(A.{$colT2})";
-else if($_GET['d'] == 8) $col="A.{$colIp}";
-else $col="A.{$colHit}";
-
 // ORDER asc/desc
      if($_GET['e'] == 1) $ord='ASC';
 else if($_GET['e'] == 2) $ord='DESC';
 else $ord='DESC';
 
-$qOrder = "ORDER BY $col $ord";
+// ORDER by column
+     if($_GET['d'] == 1) $col="A.{$colHit} {$ord}, REVERSE(A.{$colUrl}) {$ord}";
+else if($_GET['d'] == 2) $col="A.{$colOp} {$ord}, A.{$colHit} {$ord}, REVERSE(A.{$colUrl}) {$ord}";
+else if($_GET['d'] == 3) $col="REVERSE(A.{$colUrl}) {$ord}";
+else if($_GET['d'] == 4) $col="LENGTH(A.{$colUrl}) {$ord}";
+else if($_GET['d'] == 5) $col="A.{$colUrl} {$ord}";
+else if($_GET['d'] == 6) $col="STRTIME(A.{$colT1}) {$ord}";
+else if($_GET['d'] == 7) $col="STRTIME(A.{$colT2}) {$ord}";
+else if($_GET['d'] == 8) $col="A.{$colIp} {$ord}, REVERSE(A.{$colUrl}) {$ord}";
+else $col="A.{$colHit}";
+
+
+$qOrder = "ORDER BY $col";
 
 
 if($_GET['b'] == 1){
