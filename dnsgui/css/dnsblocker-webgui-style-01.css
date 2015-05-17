@@ -23,6 +23,18 @@ background:#def;
 white-space:nowrap;
 }
 
+table.tbl td.cnt{
+text-align:center;
+}
+
+table.tbl td.u{
+text-align:right;
+}
+
+table.tbl tr.a td{
+background:#eff;
+}
+
 a.res, a.blk, a.unblk, p.blk, p.ublk{
 display:inline-block;
 margin-top:3px;
@@ -34,7 +46,7 @@ a.res{ background-image:url("../img/search-icon-color2.png"); }
 
 a.blk{
 background-image:url("../img/checkbox-color1.gif");
-background-position:16px 0px;
+background-position:15px 0px;
 }
 a.unblk{ background-image:url("../img/checkbox-color1.gif"); }
 
@@ -52,21 +64,10 @@ vertical-align:middle;
 
 p.ublk{ background-image:url("../img/circle-green1.png"); }
 
-table.tbl td.cnt{
-text-align:center;
-}
-
-table.tbl td.u{
-text-align:right;
-}
-
-table.tbl tr.a td{
-background:#eff;
-}
 
 table.tnav{
 border-collapse: collapse;
-margin:20px 0 20px 30px;
+margin:20px 0 20px 0px;
 border:1px dotted #ccc;
 }
 
@@ -121,17 +122,17 @@ background:#eff;
 }
 
 
-/* **********************************
+/************************************
 		CSS for index.php
-************************************* */
+*************************************/
 
 table.t2{
 border-collapse: collapse;
 border:1px solid #ccc;
-margin-top:20px;
+/* margin-top:20px; */
 }
 
-table.t2 td{
+table.t2 > tbody > tr > td{
 border:1px solid #ccc;
 padding:2px 10px 2px 10px;
 background:#def;
@@ -139,10 +140,102 @@ white-space:nowrap;
 
 }
 
-table.t2 td.lb{
+table.t2 > tbody > tr > td.lb{
 text-align:right;
 }
 
+table.t2 > tbody > tr > td.vl,
+table.t2 > tbody > tr > td.vlr{
+text-align:left;
+}
+
+table.t2 > tbody > tr > td.vlr{
+text-align:right;
+}
+
+td.stattbl{
+padding:0px 20px 20px 0px;
+vertical-align:bottom;
+}
+
+
+
+/************************************
+		CSS for index.php
+*************************************/
+.TopNav01 {
+	display:block;
+}
+.TopNav01 > ul{
+	margin:10px 0px 10px 0px;
+	padding:0px;
+	display:inline-block;
+	border:1px solid #ccc;
+	background:#def;
+	list-style-type:none;
+}
+
+.TopNav01 > ul > li{
+	display:inline-block;
+}
+
+
+.TopNav01 > ul > li > p {
+	margin:0px;
+	padding:0px;
+	padding:5px 10px 5px 10px;
+}
+
+.TopNav01 > ul > li > a:link,
+.TopNav01 > ul > li > a:visited,
+.TopNav01 > ul > li > a:hover,
+.TopNav01 > ul > li > a:active{
+	text-decoration:none;
+	display:block;
+	padding:5px 10px 5px 10px;
+	color:#00f;
+	border-left:1px solid #ccc;
+}
+
+.TopNav01 > ul > li >  a:hover{
+	background:#eff;
+}
+
+.TopNav01 > ul > li > a.sel:link,
+.TopNav01 > ul > li > a.sel:visited,
+.TopNav01 > ul > li > a.sel:hover,
+.TopNav01 > ul > li > a.sel:active{
+	color:#069;
+	background:#eff;
+}
+
+
+
+
+
+
+ul.ctrl1,
+ul.ctrl1 > ul{
+	list-style-type:none;
+	margin:0px;
+	padding:0px;
+}
+
+ul.ctrl1{
+	margin:40px 0px 40px 0px;
+}
+
+
+ul.ctrl1 > li{
+	border:1px solid #ccc;
+	background:#def;
+	display:block;
+	width: 300px;
+	margin-top:10px;
+}
+
+
+/*
 
 ul.ctrl1, ul.ctrl1 li{
 margin: 0px;
@@ -172,3 +265,5 @@ border-bottom:1px solid #99c;
 border-right:1px solid #99c;
 background:#eef;
 }
+
+*/

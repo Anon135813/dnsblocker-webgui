@@ -1,6 +1,7 @@
 <?php
 
 require('./inc/global-var-inc.php');
+require('./inc/common-html-inc.php');
 
 global $dbfile;
 global $tblBlk;
@@ -87,36 +88,30 @@ if(isset($_GET['a'])){
 </head>
 <body>
 <div class="box1">
-<ul class="ctrl1">
-	<li><a href="?a=1">Restart dnsmasq daemon</a></li>
-	<li><a href="?a=4">Regenerate auto-list conf file</a></li>
-	<li><a href="?a=5">Regenerate custom-list conf file</a></li>
-	<li><a href="?a=6">Regenerate both conf file</a></li>
-	<li><a href="?a=7">Import most recent dnsmasq logs</a></li>
-</ul>
+<?php echo TopNavHtml(1); ?>
+<div class="TopNav01">
+	<ul>
+		<li><p>dnsmasq Control:</p></li>
+		<li><a href="?a=1">Restart</a></li>
+	</ul>
+</div>
+<div class="TopNav01">
+	<ul>
+		<li><p>Export conf:</p></li>
+		<li><a href="?a=4">Auto-List</a></li>
+		<li><a href="?a=5">Custom-List</a></li>
+		<li><a href="?a=6">Both List</a></li>
+	</ul>
+</div>
+<div class="TopNav01">
+	<ul>
+		<li><p>Import Log:</p></li>
+		<li><a href="?a=7">Import</a></li>
+	</ul>
+</div>
+<br/>
 <?php
 
-function KeyValTbl($keyValArray){
-
-	$imx = count($keyValArray[0]);
-
-	$b = '<table class="t2">';
-
-	for($i=0; $i<$imx; $i++){
-
-		$b .= '<tr><td class="lb">';
-		$b .= $keyValArray[1][$i];
-		$b .= ':</td><td>';
-		$b .= $keyValArray[0][$i];
-		$b .= '</td></tr>';
-		$b .= "\n";
-	}
-
-	$b .= '<table class="t1">';
-
-	return $b;
-
-}
 
 function strtime($t){
 
@@ -146,7 +141,7 @@ function mkTbl($a, $c){
 
 	$e = Array('Process', 'PID', 'Started On', 'Running since', 'Total CPU-Time', 'Memory used', 'Service Status');
 
-	return KeyValTbl(Array($a, $e));
+	return KeyValTblHtml($e, $a);
 }
 
 
@@ -158,6 +153,7 @@ exec("sudo {$phpsudotaskfile} --status-dnsmasq", $b);
 exec('ps -eo fname,pid,stime,etime,cputime,pmem | grep dnsmasq', $a);
 
 echo mkTbl($a[0], $b[0]);
+echo "{$eol}<br/>{$eol}";
 
 $a = null;
 $b = null;
@@ -167,6 +163,7 @@ exec("sudo {$phpsudotaskfile} --status-lighttpd", $b);
 exec('ps -eo fname,pid,stime,etime,cputime,pmem | grep lighttpd', $a);
 
 echo mkTbl($a[0], $b[0]);
+echo "{$eol}<br/>{$eol}";
 
 $a = null;
 $b = null;
@@ -185,6 +182,45 @@ $c[1] = $b[4];
 $c[2] = "{$b[5]} {$b[6]} {$b[7]}";
 $c[3] = dirname($b[8]);
 
+
+try {
+
+	$db = new PDO('sqlite:' . $dbfile);
+
+	$q = "SELECT COUNT(*) AS 'RowCount' FROM {$tblDns}";
+	$res = $db->query($q);
+	if($res != FALSE){
+		$row = $res->fetch();
+		$c[4] = "{$row['RowCount']} rows";
+	}
+	else{
+		$c[4] = 'unavailable';
+	}
+
+	$res = null;
+	$row = null;
+
+	$q = "SELECT COUNT(*) AS 'RowCount' FROM {$tblBlk}";
+	$res = $db->query($q);
+	if($res != FALSE){
+		$row = $res->fetch();
+		$c[5] = "{$row['RowCount']} rows";
+	}
+	else{
+		$c[5] = 'unavailable';
+	}
+
+	$res = null;
+	$row = null;
+	$db  = null;
+
+}
+catch(PDOException $e){
+	//	echo "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
+	//	exit();
+}
+
+
 $d[0] = basename($a[8]);
 $d[1] = $a[4];
 $d[2] = $a1[0] . ' lines';
@@ -195,11 +231,17 @@ $a  = null;
 $a1 = null;
 $b  = null;
 
-$e  = Array('DNS Log database', 'Database file size', 'Database Last Updated', 'Database file path');
-$f  = Array('dnsmasq Log file', 'Log file size', 'Log file line-count', 'Last log written', 'Log file path');
+$e  = Array('DNS Log Database', 'Database File Size', 'Database Last Updated', 'Database File Path', "{$tblDns} Table Size", "{$tblBlk} Table Size");
+$f  = Array('dnsmasq Log File', 'Log File Size', 'Log File Line-Count', 'Last Log Written', 'Log File Path');
 
-echo KeyValTbl(Array($c, $e));
-echo KeyValTbl(Array($d, $f));
+echo KeyValTblHtml($e, $c);
+echo "{$eol}<br/>{$eol}";
+echo KeyValTblHtml($f, $d);
+
+
+
+
+
 
 
 ?>

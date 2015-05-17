@@ -1,6 +1,7 @@
 <?php
 
 require('./inc/global-var-inc.php');
+require('./inc/common-html-inc.php');
 
 global $dbfile;
 global $tblBlk;
@@ -20,6 +21,109 @@ if(isset($_GET['b']) == FALSE || $_GET['b']<1 || $_GET['b']>3)  $_GET['b']=2;
 if(isset($_GET['c']) == FALSE || $_GET['c']<1 || $_GET['c']>20) $_GET['c']=11;
 if(isset($_GET['d']) == FALSE || $_GET['d']<1 || $_GET['d']>9)  $_GET['d']=7;
 if(isset($_GET['e']) == FALSE || $_GET['e']<1 || $_GET['e']>3)  $_GET['e']=2;
+
+$db = null;
+
+try {
+	$db = new PDO('sqlite:' . $dbfile);
+}
+catch(PDOException $e){
+	echo "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
+	exit();
+}
+
+
+// Generating Database statistics
+
+function Fetch01($q){
+
+	global $db;
+
+	$res = $db->query($q);
+	if($res != FALSE){
+		$row = $res->fetch();
+		return $row['ENTRYCOUNT'] . ' entries';
+	}
+
+	$res = null;
+	$row = null;
+
+	return 'unavailable';
+}
+
+function Fetch02($q){
+
+	global $db;
+
+
+	$res = $db->query($q);
+	if($res != FALSE){
+
+		$row = $res->fetch();
+
+		$a[0] = $row['URLCOUNT'] . ' url';
+		$a[1] = $row['HITCOUNTSUM'] . ' hits';
+
+		return $a;
+	}
+
+	$res = null;
+	$row = null;
+
+	$a[0] = 'unavailable';
+	$a[1] = 'unavailable';
+	return $a;
+}
+
+
+// Generate Stats from DB
+
+
+$a = Array('Auto-List', 'Custom-List', 'Total');
+$b = null;
+
+$q = "SELECT COUNT(*) AS 'ENTRYCOUNT' FROM {$tblBlk} WHERE {$colOp}=1";
+$b[0] = Fetch01($q);
+
+$q = "SELECT COUNT(*) AS 'ENTRYCOUNT' FROM {$tblBlk} WHERE {$colOp}=2";
+$b[1] = Fetch01($q);
+
+$b[2] = ($b[0] + $b[1]) . ' entries';
+
+$DbStatTbl[0]  = "Summary of Table {$tblBlk}:";
+$DbStatTbl[0] .= KeyValTblHtml($a, $b, 'vlr');
+
+
+
+$a = Array('Auto-List blocked', 'Custom-List blocked', 'Total blocked', 'Unblocked', 'Total');
+$b = null;
+
+$q = "SELECT COUNT({$colUrl}) AS 'URLCOUNT', SUM({$colHit}) AS HITCOUNTSUM FROM {$tblDns} WHERE {$colOp}=1";
+$b[0] = Fetch02($q);
+
+$q = "SELECT COUNT({$colUrl}) AS 'URLCOUNT', SUM({$colHit}) AS HITCOUNTSUM FROM {$tblDns} WHERE {$colOp}=2";
+$b[1] = Fetch02($q);
+
+$b[2][0] = ($b[0][0] + $b[1][0]) . ' url';
+$b[2][1] = ($b[0][1] + $b[1][1]) . ' hits';
+
+$q = "SELECT COUNT({$colUrl}) AS 'URLCOUNT', SUM({$colHit}) AS HITCOUNTSUM FROM {$tblDns} WHERE {$colOp}=0";
+$b[3] = Fetch02($q);
+
+$b[4][0] = ($b[3][0] + $b[2][0]) . ' url';
+$b[4][1] = ($b[3][1] + $b[2][1]) . ' hits';
+
+$DbStatTbl[2]  = "Log Summary:";
+$DbStatTbl[2] .= KeyValTblHtml($a, $b, 'vlr', 2);
+
+
+$a = Array('Blocked by Auto-List', 'Blocked by Custom-List', 'Unblocked');
+$b[0] = '<p class="blk">1</p>';
+$b[1] = '<p class="blk">2</p>';
+$b[2] = '<p class="ublk"></p>';
+$DbStatTbl[3]  = "* OP Column Legend:";
+$DbStatTbl[3] .= KeyValTblHtml($a, $b);
+
 
 function f1($a, $b){
 
@@ -44,6 +148,7 @@ function f1($a, $b){
 </head>
 <body>
 <div class="box1">
+<?php echo TopNavHtml(2); ?>
 <form action="viewlog.php">
 <table class="tnav">
 <tr>
@@ -124,30 +229,22 @@ function f1($a, $b){
 </tr>
 </table>
 </form>
-* OP Column value legend (1 = Blocked by Auto-list, 2 = Blocked by Custom-list)<br/>
+<table>
+<tr>
+	<td class="stattbl"><?php echo $DbStatTbl[2]; ?></td>
+	<td class="stattbl"><?php echo $DbStatTbl[3]; ?></td>
+	<td class="stattbl"><?php echo $DbStatTbl[0]; ?></td>
+</tr>
+</table>
+DNS Query Log:<br/>
 <?php
 
-//CREATE TABLE "dnslog"("url" varchar(256) primary key not null, "t1" varchar(16), "t2" varchar(16), "ip" varchar(16), "hit" int not null, "op" int not null);
 
-$db = null;
-$eol = "\n";
 $line = Array();
 $adUrl = Array();
 $adCustom = Array();
 $logsize = Array();
 $alter = FALSE;
-
-try {
-
-	$db = new PDO('sqlite:' . $dbfile);
-
-	//echo "SUCESSFULLY OPEN DATABASE FILE!{$eol}<br/><br/>OP VALUE LEGEND<br/>1 = AUTO LIST<br/>2 = CUSTOM LIST<br/><br/>";
-
-}
-catch(PDOException $e){
-	echo "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
-	exit();
-}
 
 // SELECT fields
 $qField = "SELECT * FROM {$tblDns} AS A";
