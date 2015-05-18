@@ -281,8 +281,6 @@ function ImportDnsmasqLog(){
 
 
 
-// SQL SCHEMA FOR dnslog table
-// CREATE TABLE "dnslog"("url" varchar(256) primary key not null, "t1" varchar(16), "t2" varchar(16), "ip" varchar(16), "hit" int not null, "op" int not null);
 
 /*
 

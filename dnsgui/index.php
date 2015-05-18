@@ -30,7 +30,7 @@ if(isset($_GET['a'])){
 	}
 	else if($_GET['a']==4){
 
-		require('./inc/update-blocklist-conf-files.php');
+		require('./inc/blocklist-conf-inc.php');
 
 		// Sending reloading header causes the client browser to
 		// reload a fresh index.php page while rest of this script
@@ -39,34 +39,61 @@ if(isset($_GET['a'])){
 		// also cleans up the unwanted url params from browser url-bar
 		header('Location: index.php');
 
-		// export the auto-list
+		// Export Auto-List
 		ExportConfAutolist();
 	}
 	else if($_GET['a']==5){
 
-		require('./inc/update-blocklist-conf-files.php');
+		require('./inc/blocklist-conf-inc.php');
 
 		header('Location: index.php');
 
-		// export the auto-list
+		// Export Custom-List
 		ExportConfCustomlist();
 	}
 	else if($_GET['a']==6){
 
-		require('./inc/update-blocklist-conf-files.php');
+		require('./inc/blocklist-conf-inc.php');
 
 		header('Location: index.php');
 
-		// export the both-list
+		// Export Both Auto-List and Custom-List
 		ExportConfBothlist();
 	}
 	else if($_GET['a']==7){
+
+		require('./inc/blocklist-conf-inc.php');
+
+		header('Location: index.php');
+
+		// Import Auto-List
+		ImportConfAutolist();
+	}
+	else if($_GET['a']==8){
+
+		require('./inc/blocklist-conf-inc.php');
+
+		header('Location: index.php');
+
+		// Import Custom-List
+		ImportConfCustomlist();
+	}
+	else if($_GET['a']==9){
+
+		require('./inc/blocklist-conf-inc.php');
+
+		header('Location: index.php');
+
+		// Import Both Auto-List and Custom-List
+		ImportConfBothlist();
+	}
+	else if($_GET['a']==10){
 
 		require('./inc/update-db-dnslog-inc.php');
 
 		header('Location: index.php');
 
-		// export the both-list
+		// Import DNS Log
 		$msg = ImportDnsmasqLog();
 		$f = fopen($dnslogfile, 'w');
 		if($f!=FALSE){
@@ -105,8 +132,16 @@ if(isset($_GET['a'])){
 </div>
 <div class="TopNav01">
 	<ul>
+		<li><p>Import conf:</p></li>
+		<li><a href="?a=7">Auto-List</a></li>
+		<li><a href="?a=8">Custom-List</a></li>
+		<li><a href="?a=9">Both List</a></li>
+	</ul>
+</div>
+<div class="TopNav01">
+	<ul>
 		<li><p>Import Log:</p></li>
-		<li><a href="?a=7">Import</a></li>
+		<li><a href="?a=10">Import</a></li>
 	</ul>
 </div>
 <br/>

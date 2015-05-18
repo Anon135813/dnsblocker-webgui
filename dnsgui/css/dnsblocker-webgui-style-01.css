@@ -195,6 +195,7 @@ vertical-align:bottom;
 	padding:5px 10px 5px 10px;
 	color:#00f;
 	border-left:1px solid #ccc;
+	outline-style:none;
 }
 
 .TopNav01 > ul > li >  a:hover{
@@ -207,6 +208,7 @@ vertical-align:bottom;
 .TopNav01 > ul > li > a.sel:active{
 	color:#069;
 	background:#eff;
+	outline-style:noen;
 }
 
 
@@ -233,37 +235,3 @@ ul.ctrl1 > li{
 	width: 300px;
 	margin-top:10px;
 }
-
-
-/*
-
-ul.ctrl1, ul.ctrl1 li{
-margin: 0px;
-padding:0px;
-}
-
-ul.ctrl1{
-margin-top:20px;
-}
-
-ul.ctrl1 li a:link, ul.ctrl1 li a:visited, ul.ctrl1 li a:hover, ul.ctrl1 li a:active{
-display:block;
-width: 300px;
-border:1px solid #ccc;
-margin: 0px 0 10px 0;
-padding: 5px 10px 5px 10px;
-background:#def;
-text-decoration:none;
-text-align:center;
-color:#00f;
-}
-
-ul.ctrl1 li a:hover{
-border-top:1px solid #ccf;
-border-left:1px solid #ccf;
-border-bottom:1px solid #99c;
-border-right:1px solid #99c;
-background:#eef;
-}
-
-*/
