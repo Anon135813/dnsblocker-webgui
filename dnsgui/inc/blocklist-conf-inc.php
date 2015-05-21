@@ -175,6 +175,20 @@ function ImportConf($fn, $op){
 		exit();
 	}
 
+	// attempts to speed up sqlite inserts with the cost of:
+	// most likely db corruption on powerlose while
+	// data enterting into the database.
+
+	// Result with optimization OFF
+	// Entries Entred: 2422 Entries, Time Spend: 200.7921 Seconds
+
+	// Result with optimization ON
+	// Entries Entred: 2422 Entries, Time Spend: 11.9923 Seconds
+
+	$db->query('PRAGMA synchronous = OFF');
+	$db->query('PRAGMA journal_mode = OFF');
+	$db->query('BEGIN TRANSACTION');
+
 
 	for($i=0; $i<$lineCount; $i++){
 
@@ -222,6 +236,8 @@ function ImportConf($fn, $op){
 
 		$lines[$i] = null;
 	}
+
+	$db->query('END TRANSACTION');
 
 	$scriptTime = round((microtime(true)-$scriptTime),4);
 
