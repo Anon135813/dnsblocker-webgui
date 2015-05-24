@@ -104,6 +104,7 @@ function ImportDnsmasqLog(){
 			 // these are LAN only requests, notihng to do with internet
 			 else if(substr($url, -5)=='.arpa') $processLine=FALSE;
 			 else if(substr($url, -5)=='._tcp') $processLine=FALSE;
+			 else if($url=='localhost') 	    $processLine=FALSE;
 
 			 // strip out 'www.' if present at the begining of address.
 			 // this will reduce some unnecessory duplicate entries.
@@ -167,6 +168,15 @@ function ImportDnsmasqLog(){
 
 	// get the final entry count
 	$entryCount = count($entry);
+
+	// attempts to speed up sqlite inserts with the cost of:
+	// most likely db corruption on powerlose while
+	// data enterting into the database.
+
+	$db->query('PRAGMA synchronous = OFF');
+	$db->query('PRAGMA journal_mode = OFF');
+	$db->query('BEGIN TRANSACTION');
+
 
 	// Check if entries already exsit in the database.
 	// if exist update the hit, t2, ip
@@ -265,6 +275,8 @@ function ImportDnsmasqLog(){
 		}
 	}
 
+	$db->query('END TRANSACTION');
+
 
 	$msg .= "New Record Entred = {$newCount}{$eol}Existing Record Updated = {$updateCount}{$eol}";
 
@@ -281,6 +293,8 @@ function ImportDnsmasqLog(){
 
 
 
+// SQL SCHEMA FOR dnslog table
+// CREATE TABLE "dnslog"("url" varchar(256) primary key not null, "t1" varchar(16), "t2" varchar(16), "ip" varchar(16), "hit" int not null, "op" int not null);
 
 /*
 

@@ -137,6 +137,47 @@ function f1($a, $b){
 
 }
 
+function top_domain($url){
+
+	$urlParts = explode('.', $url);
+	$i = count($urlParts);
+
+	if($i > 1){
+
+		$m = strlen($urlParts[$i-1]);
+
+		if($m==2){
+
+			if($i>=3){
+
+				$m = strlen($urlParts[$i-2]);
+
+				if($m<5){
+
+					return $urlParts[$i-3] . '.' . $urlParts[$i-2] . '.' . $urlParts[$i-1];
+				}
+				else return $urlParts[$i-2] . '.' . $urlParts[$i-1];
+
+			}
+			else return $url;
+		}
+		else if($m==3){
+
+			return $urlParts[$i-2] . '.' . $urlParts[$i-1];
+
+		}
+		else{
+
+			if($i>=3) return $urlParts[$i-3] . '.' . $urlParts[$i-2] . '.' . $urlParts[$i-1];
+			else return $url;
+		}
+
+	}
+
+	return $url;
+
+}
+
 
 // end of php blcok1
 ?>
@@ -158,8 +199,9 @@ function f1($a, $b){
 			<?php f1('a', 1); ?>All</option>
 			<?php f1('a', 2); ?>Only Unblocked</option>
 			<?php f1('a', 3); ?>Only Blocked</option>
-			<?php f1('a', 4); ?>Only Blocked by Auto list</option>
-			<?php f1('a', 5); ?>Only Blocked by Custom list</option>
+			<?php f1('a', 4); ?>Only Blocked by Auto-list</option>
+			<?php f1('a', 5); ?>Only Blocked by Custom-list</option>
+			<?php f1('a', 6); ?>Group By Base Domain Name</option>
 		</select>
 	</td>
 </tr>
@@ -247,19 +289,19 @@ $logsize = Array();
 $alter = FALSE;
 
 // SELECT fields
-$qField = "SELECT * FROM {$tblDns} AS A";
+$qField = "SELECT * FROM {$tblDns}";
 
 // WHERE condition for unblocked only(goes after $qCount)
-$qUnblockedOnly = "A.{$colOp}=0";
+$qUnblockedOnly = "{$colOp}=0";
 
 // WHERE condition for blocked custom list only(goes after $qCount)
-$qBlockedCustom = "A.{$colOp}=2";
+$qBlockedCustom = "{$colOp}=2";
 
 // WHERE condition for blocked auto list only(goes after $qCount)
-$qBlockedAuto = "A.{$colOp}=1";
+$qBlockedAuto = "{$colOp}=1";
 
 // WHERE condition for blocked auto list only(goes after $qCount)
-$qBlockedOnly = "(A.{$colOp}=1 OR A.{$colOp}=2)";
+$qBlockedOnly = "({$colOp}=1 OR {$colOp}=2)";
 
 // Limit Amount (basically "n-1" if limit is hit or "n" if limit is number)
      if($_GET['c'] == 1) $n=0;
@@ -290,15 +332,15 @@ else if($_GET['e'] == 2) $ord='DESC';
 else $ord='DESC';
 
 // ORDER by column
-     if($_GET['d'] == 1) $col="A.{$colHit} {$ord}, REVERSE(A.{$colUrl}) {$ord}";
-else if($_GET['d'] == 2) $col="A.{$colOp} {$ord}, A.{$colHit} {$ord}, REVERSE(A.{$colUrl}) {$ord}";
-else if($_GET['d'] == 3) $col="REVERSE(A.{$colUrl}) {$ord}";
-else if($_GET['d'] == 4) $col="LENGTH(A.{$colUrl}) {$ord}";
-else if($_GET['d'] == 5) $col="A.{$colUrl} {$ord}";
-else if($_GET['d'] == 6) $col="STRTIME(A.{$colT1}) {$ord}";
-else if($_GET['d'] == 7) $col="STRTIME(A.{$colT2}) {$ord}";
-else if($_GET['d'] == 8) $col="A.{$colIp} {$ord}, REVERSE(A.{$colUrl}) {$ord}";
-else $col="A.{$colHit}";
+     if($_GET['d'] == 1) $col="{$colHit} {$ord}, REVERSE({$colUrl}) {$ord}";
+else if($_GET['d'] == 2) $col="{$colOp} {$ord}, {$colHit} {$ord}, REVERSE({$colUrl}) {$ord}";
+else if($_GET['d'] == 3) $col="REVERSE({$colUrl}) {$ord}";
+else if($_GET['d'] == 4) $col="LENGTH({$colUrl}) {$ord}";
+else if($_GET['d'] == 5) $col="{$colUrl} {$ord}";
+else if($_GET['d'] == 6) $col="STRTIME({$colT1}) {$ord}";
+else if($_GET['d'] == 7) $col="STRTIME({$colT2}) {$ord}";
+else if($_GET['d'] == 8) $col="{$colIp} {$ord}, REVERSE({$colUrl}) {$ord}";
+else $col="{$colHit}";
 
 
 $qOrder = "ORDER BY $col";
@@ -306,8 +348,8 @@ $qOrder = "ORDER BY $col";
 
 if($_GET['b'] == 1){
 
-	if($_GET['a']==1) $qCount = "WHERE (A.{$colHit} > $n)";
-	else $qCount = "WHERE (A.{$colHit} > $n) AND";
+	if($_GET['a']==1) $qCount = "WHERE ({$colHit} > $n)";
+	else $qCount = "WHERE ({$colHit} > $n) AND";
 
 		 if($_GET['a'] == 1) $q = "{$qField} {$qCount} {$qOrder}";
 	else if($_GET['a'] == 2) $q = "{$qField} {$qCount} {$qUnblockedOnly} {$qOrder}";
@@ -328,12 +370,22 @@ else{
 	else if($_GET['a'] == 3) $q = "{$qField} WHERE {$qBlockedOnly} {$qOrder} {$qLimit}";
 	else if($_GET['a'] == 4) $q = "{$qField} WHERE {$qBlockedAuto} {$qOrder} {$qLimit}";
 	else if($_GET['a'] == 5) $q = "{$qField} WHERE {$qBlockedCustom} {$qOrder} {$qLimit}";
+	else if($_GET['a'] == 6){
+
+		 $subQ = "SELECT SUM({$colHit}) AS 'hit', '*.' || TOPDOMAIN({$colUrl}) AS 'url', {$colOp} AS 'op', {$colIp} AS 'ip', {$colT1} AS 't1', {$colT2} AS 't2' FROM {$tblDns} GROUP BY TOPDOMAIN({$colUrl}) {$qLimit}";
+
+		 $q = "SELECT * FROM ({$subQ}) {$qOrder}";
+
+	}
 	else $q = "{$qField} {$qOrder} {$qLimit}";
 
 }
 
 $db->sqliteCreateFunction('REVERSE', 'strrev', 1);
 $db->sqliteCreateFunction('STRTIME', 'strtotime', 1);
+$db->sqliteCreateFunction('TOPDOMAIN', 'top_domain', 1);
+
+//if($_GET['a']==6){ echo "<pre>{$q}</pre>"; exit();}
 
 $res = $db->query($q);
 
