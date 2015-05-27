@@ -49,4 +49,9 @@ $GLOBALS['adlistCustomfile']		= $GLOBALS['adlistCustompath'] . $GLOBALS['adlistC
 // sometimes helps when php project are cross platform.
 $GLOBALS['eol'] = "\n";
 
+// SQL SCHEMA FOR dnslog and blocklist table
+// CREATE TABLE "blocklist"("url" varchar(256) primary key not null, "op" int not null);
+// CREATE TABLE "dnslog"("url" varchar(256) primary key not null, "t1" varchar(16), "t2" varchar(16), "ip" varchar(16), "hit" int not null, "op" int not null);
+
+
 ?>

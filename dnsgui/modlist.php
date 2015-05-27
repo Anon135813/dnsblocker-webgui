@@ -36,6 +36,11 @@ function f3(){
 		echo 'Block the follwing URL.<br/>Add them into the custom block list:';
 
 	}
+	else if($_GET['a']==3){
+
+		echo '<img src="./img/block-icon-color1.png" /> ';
+		echo 'Remove the follwing urls from the dns log.<br/>You can use the SQL LIKE wildcards including "%".';
+	}
 
 }
 
@@ -85,38 +90,40 @@ if(isset($_POST['submit']) && $_POST['submit']=='Apply Changes'){
 	if(isset($_POST['a1']) && isset($_POST['u1']) && strlen($_POST['u1'])>0){
 
 
+		global $dbfile;
+		global $tblBlk;
+		global $tblDns;
+		global $colUrl;
+		global $colT1;
+		global $colT2;
+		global $colHit;
+		global $colIp;
+		global $colOp;
+		global $eol;
+
+		$db = null;
+
+		// NEED CLEANUP
+		$urlArray = preg_split('/[\n | \n\r]+/', $_POST['u1']);
+		$cleanUrl = $urlArray[0];
+
+
+		try {
+
+			$db = new PDO('sqlite:' . $dbfile);
+			//echo "SUCESSFULLY OPEN DATABASE FILE!{$eol}";
+		}
+		catch(PDOException $e){
+			echo "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
+			exit();
+		}
+
+		$db->query('PRAGMA synchronous = OFF');
+		$db->query('PRAGMA journal_mode = OFF');
+		$db->query('BEGIN TRANSACTION');
+
+
 		if($_POST['a1']==1 || $_POST['a1']==2){
-
-			global $dbfile;
-			global $tblBlk;
-			global $tblDns;
-			global $colUrl;
-			global $colT1;
-			global $colT2;
-			global $colHit;
-			global $colIp;
-			global $colOp;
-
-			$db = null;
-			$newCount = 0;
-			$updateCount = 0;
-			$eol = '<br/>';
-
-			try {
-
-				$db = new PDO('sqlite:' . $dbfile);
-				//echo "SUCESSFULLY OPEN DATABASE FILE!{$eol}";
-			}
-			catch(PDOException $e){
-				echo "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
-				exit();
-			}
-
-			// NEED CLEANUP
-			$urlArray = preg_split('/[\n | \n\r]+/', $_POST['u1']);
-
-			$cleanUrl = $urlArray[0];
-
 
 			$q1  = "SELECT * FROM {$tblBlk} AS A WHERE '{$cleanUrl}' LIKE '%' || A.{$colUrl} LIMIT 1";
 
@@ -170,23 +177,57 @@ if(isset($_POST['submit']) && $_POST['submit']=='Apply Changes'){
 				}
 
 
-				echo "{$row['url']} entry has been added from the database. if you regenerate the dnsmasq 'conf' files and restart the dnsmasq service, all URL matching the entry will be blocked.";
+				echo "<pre>{$row['url']} entry has been added from the database. if you regenerate the dnsmasq 'conf' files and restart the dnsmasq service, all URL matching the entry will be blocked.</pre>";
 
 			}
 
 			$db->exec($q2);
 			$db->exec($q3);
 
-			//echo "<br/>{$q1}<br/>{$q2}<br/>{$q3}<br/>";
+			$row = null;
+			$res = null;
 
+		}
+		else if($_POST['a1']==3){
+
+			$q1  = "SELECT {$colUrl} FROM {$tblDns} WHERE {$colUrl} LIKE '{$cleanUrl}'";
+
+
+			$res = $db->query($q1);
+
+			if($res==false){
+				die(var_export($db->errorinfo(), TRUE));
+			}
+
+			$row = $res->fetch();
+			$urlList = '';
+			$urlCount = 0;
+
+			while($row != FALSE){
+				$urlList .= $row['url'];
+				$urlList .= $eol;
+				$urlCount++;
+				$row = $res->fetch();
+			}
+
+			$q2  = "DELETE FROM {$tblDns} WHERE {$colUrl} LIKE '{$cleanUrl}'";
+
+
+			echo "<pre>The following {$urlCount} url entries has been removed from 'dnslog' table as a match for '{$cleanUrl}'.\n\n{$urlList}</pre>";
+
+			$db->exec($q2);
 
 			$row = null;
 			$res = null;
-			$db  = null;
-
-			exit();
 
 		}
+
+		$db->query('END TRANSACTION');
+		if($_POST['a1']==3) $db->query('VACUUM');
+		$db  = null;
+
+		exit();
+
 	}
 	else{
 
