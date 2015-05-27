@@ -110,7 +110,7 @@ if(isset($_GET['a'])){
 <html>
 <head>
 <meta name = "viewport" content = "width = 510">
-<title>DNSMASQ STATUS</title>
+<title>SYSTEM SUMMARY</title>
 <link rel="stylesheet" type="text/css" media="all" href="./css/dnsblocker-webgui-style-01.css" />
 </head>
 <body>

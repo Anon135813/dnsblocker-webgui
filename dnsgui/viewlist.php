@@ -16,11 +16,10 @@ global $colOp;
 
 // start of php blcok1
 
-if(isset($_GET['a']) == FALSE || $_GET['a']<1 || $_GET['a']>6)  $_GET['a']=1;
-if(isset($_GET['b']) == FALSE || $_GET['b']<1 || $_GET['b']>2)  $_GET['b']=2;
-if(isset($_GET['c']) == FALSE || $_GET['c']<1 || $_GET['c']>19) $_GET['c']=11;
-if(isset($_GET['d']) == FALSE || $_GET['d']<1 || $_GET['d']>8)  $_GET['d']=7;
-if(isset($_GET['e']) == FALSE || $_GET['e']<1 || $_GET['e']>2)  $_GET['e']=2;
+if(isset($_GET['a']) == FALSE || $_GET['a']<1 || $_GET['a']>3)  $_GET['a']=3;
+if(isset($_GET['c']) == FALSE || $_GET['c']<6 || $_GET['c']>19) $_GET['c']=11;
+if(isset($_GET['d']) == FALSE || $_GET['d']<1 || $_GET['d']>4)  $_GET['d']=3;
+if(isset($_GET['e']) == FALSE || $_GET['e']<1 || $_GET['e']>2)  $_GET['e']=1;
 
 $db = null;
 
@@ -42,13 +41,13 @@ function Fetch01($q){
 	$res = $db->query($q);
 	if($res != FALSE){
 		$row = $res->fetch();
-		return $row['ENTRYCOUNT'] . ' entries';
+		return $row['ENTRYCOUNT'];
 	}
 
 	$res = null;
 	$row = null;
 
-	return 'unavailable';
+	return '0';
 }
 
 function Fetch02($q){
@@ -61,8 +60,8 @@ function Fetch02($q){
 
 		$row = $res->fetch();
 
-		$a[0] = $row['URLCOUNT'] . ' url';
-		$a[1] = $row['HITCOUNTSUM'] . ' hits';
+		$a[0] = $row['URLCOUNT'];
+		$a[1] = $row['HITCOUNTSUM'];
 
 		return $a;
 	}
@@ -70,59 +69,45 @@ function Fetch02($q){
 	$res = null;
 	$row = null;
 
-	$a[0] = 'unavailable';
-	$a[1] = 'unavailable';
+	$a[0] = '0';
+	$a[1] = '0';
 	return $a;
 }
 
 
 // Generate Stats from DB
 
-
 $a = Array('Auto-List', 'Custom-List', 'Total');
-$b = null;
 
 $q = "SELECT COUNT(*) AS 'ENTRYCOUNT' FROM {$tblBlk} WHERE {$colOp}=1";
-$b[0] = Fetch01($q);
+$a0 = Fetch01($q) . ' entries';
 
 $q = "SELECT COUNT(*) AS 'ENTRYCOUNT' FROM {$tblBlk} WHERE {$colOp}=2";
-$b[1] = Fetch01($q);
+$a1 = Fetch01($q) . ' entries';
 
-$b[2] = ($b[0] + $b[1]) . ' entries';
-
-$DbStatTbl[0]  = "Summary of Table {$tblBlk}:";
-$DbStatTbl[0] .= KeyValTblHtml($a, $b, 'vlr');
-
-
-
-$a = Array('Auto-List blocked', 'Custom-List blocked', 'Total blocked', 'Unblocked', 'Total');
-$b = null;
+$aTotal = ($a0 + $a1) . ' entries';
 
 $q = "SELECT COUNT({$colUrl}) AS 'URLCOUNT', SUM({$colHit}) AS HITCOUNTSUM FROM {$tblDns} WHERE {$colOp}=1";
-$b[0] = Fetch02($q);
+$b = Fetch02($q);
 
 $q = "SELECT COUNT({$colUrl}) AS 'URLCOUNT', SUM({$colHit}) AS HITCOUNTSUM FROM {$tblDns} WHERE {$colOp}=2";
-$b[1] = Fetch02($q);
-
-$b[2][0] = ($b[0][0] + $b[1][0]) . ' url';
-$b[2][1] = ($b[0][1] + $b[1][1]) . ' hits';
-
-$q = "SELECT COUNT({$colUrl}) AS 'URLCOUNT', SUM({$colHit}) AS HITCOUNTSUM FROM {$tblDns} WHERE {$colOp}=0";
-$b[3] = Fetch02($q);
-
-$b[4][0] = ($b[3][0] + $b[2][0]) . ' url';
-$b[4][1] = ($b[3][1] + $b[2][1]) . ' hits';
-
-$DbStatTbl[2]  = "Log Summary:";
-$DbStatTbl[2] .= KeyValTblHtml($a, $b, 'vlr', 2);
+$c = Fetch02($q);
 
 
-$a = Array('Blocked by Auto-List', 'Blocked by Custom-List', 'Unblocked');
-$b[0] = '<p class="blk">1</p>';
-$b[1] = '<p class="blk">2</p>';
-$b[2] = '<p class="ublk"></p>';
-$DbStatTbl[3]  = "* OP Column Legend:";
-$DbStatTbl[3] .= KeyValTblHtml($a, $b);
+$e = Array(
+		Array($a0, 		'Blocked:',          $b[0]  . ' url',          $b[1]  . ' hits'),
+		Array($a1, 		'Blocked:',		     $c[0]  . ' url',          $c[1]  . ' hits'),
+		Array($aTotal,  'Blocked:',	  ($b[0]+$c[0]) . ' url',   ($b[1]+$c[1]) . ' hits')
+);
+
+$DbStatTbl[0]  = "Block List Summary:";
+$DbStatTbl[0] .= KeyValTblHtml($a, $e, 'vlr', 4);
+
+
+$a = Array('Auto-List entry', 'Custom-List entry');
+$b = Array('<p class="blk">1</p>', '<p class="blk">2</p>');
+$DbStatTbl[1]  = "* OP Column Legend:";
+$DbStatTbl[1] .= KeyValTblHtml($a, $b);
 
 
 function f1($a, $b){
@@ -184,46 +169,28 @@ function top_domain($url){
 <!DOCTYPE html>
 <html>
 <head>
-<title>DNS LOGS</title>
+<title>BLOCK LISTS</title>
 <link rel="stylesheet" type="text/css" media="all" href="./css/dnsblocker-webgui-style-01.css" />
 </head>
 <body>
 <div class="box1">
-<?php echo TopNavHtml(2); ?>
-<form action="viewlog.php">
+<?php echo TopNavHtml(3); ?>
+<form action="viewlist.php">
 <table class="tnav">
 <tr>
 	<td class="l">Show:</td>
 	<td class="v">
 		<select name="a">
 			<?php f1('a', 1); ?>All</option>
-			<?php f1('a', 2); ?>Only Unblocked</option>
-			<?php f1('a', 3); ?>Only Blocked</option>
-			<?php f1('a', 4); ?>Only Blocked by Auto-list</option>
-			<?php f1('a', 5); ?>Only Blocked by Custom-list</option>
-			<?php f1('a', 6); ?>Group By Base Domain Name</option>
+			<?php f1('a', 2); ?>Auto-list</option>
+			<?php f1('a', 3); ?>Custom-list</option>
 		</select>
 	</td>
 </tr>
 <tr>
-	<td class="l">Limit by:</td>
-	<td class="v">
-		<select name="b">
-			<?php f1('b', 1); ?>Minimum hit-count</option>
-			<?php f1('b', 2); ?>Number of lines</option>
-		</select>
-	</td>
-</tr>
-
-<tr>
-	<td class="l">Limit amount:</td>
+	<td class="l">Number of Lines</td>
 	<td class="v">
 		<select name="c">
-			<?php f1('c', 1); ?>1</option>
-			<?php f1('c', 2); ?>2</option>
-			<?php f1('c', 3); ?>3</option>
-			<?php f1('c', 4); ?>4</option>
-			<?php f1('c', 5); ?>5</option>
 			<?php f1('c', 6); ?>10</option>
 			<?php f1('c', 7); ?>20</option>
 			<?php f1('c', 8); ?>30</option>
@@ -245,14 +212,10 @@ function top_domain($url){
 	<td class="l">Sort by column:</td>
 	<td class="v">
 		<select name="d">
-			<?php f1('d', 1); ?>Hit-Count</option>
-			<?php f1('d', 2); ?>OP</option>
-			<?php f1('d', 3); ?>URL (By domain)</option>
-			<?php f1('d', 4); ?>URL (By length)</option>
-			<?php f1('d', 5); ?>URL (By alphabetic)</option>
-			<?php f1('d', 6); ?>First Time (T1)</option>
-			<?php f1('d', 7); ?>Last Time (T2)</option>
-			<?php f1('d', 8); ?>Last IP</option>
+			<?php f1('d', 1); ?>URL (By domain)</option>
+			<?php f1('d', 2); ?>URL (By length)</option>
+			<?php f1('d', 3); ?>URL (By alphabetic)</option>
+			<?php f1('d', 4); ?>OP</option>
 		</select>
 	</td>
 </tr>
@@ -273,12 +236,13 @@ function top_domain($url){
 </form>
 <table>
 <tr>
-	<td class="stattbl"><?php echo $DbStatTbl[2]; ?></td>
-	<td class="stattbl"><?php echo $DbStatTbl[3]; ?></td>
+	<td class="stattbl"><?php echo $DbStatTbl[1]; ?></td>
+</tr>
+<tr>
 	<td class="stattbl"><?php echo $DbStatTbl[0]; ?></td>
 </tr>
 </table>
-DNS Query Log:<br/>
+Block List Entries:<br/>
 <?php
 
 
@@ -289,19 +253,13 @@ $logsize = Array();
 $alter = FALSE;
 
 // SELECT fields
-$qField = "SELECT * FROM {$tblDns}";
-
-// WHERE condition for unblocked only(goes after $qCount)
-$qUnblockedOnly = "{$colOp}=0";
+$qField = "SELECT * FROM {$tblBlk}";
 
 // WHERE condition for blocked custom list only(goes after $qCount)
 $qBlockedCustom = "{$colOp}=2";
 
 // WHERE condition for blocked auto list only(goes after $qCount)
 $qBlockedAuto = "{$colOp}=1";
-
-// WHERE condition for blocked auto list only(goes after $qCount)
-$qBlockedOnly = "({$colOp}=1 OR {$colOp}=2)";
 
 // Limit Amount (basically "n-1" if limit is hit or "n" if limit is number)
      if($_GET['c'] == 1) $n=0;
@@ -332,60 +290,28 @@ else if($_GET['e'] == 2) $ord='DESC';
 else $ord='DESC';
 
 // ORDER by column
-     if($_GET['d'] == 1) $col="{$colHit} {$ord}, REVERSE({$colUrl}) {$ord}";
-else if($_GET['d'] == 2) $col="{$colOp} {$ord}, {$colHit} {$ord}, REVERSE({$colUrl}) {$ord}";
-else if($_GET['d'] == 3) $col="REVERSE({$colUrl}) {$ord}";
-else if($_GET['d'] == 4) $col="LENGTH({$colUrl}) {$ord}";
-else if($_GET['d'] == 5) $col="{$colUrl} {$ord}";
-else if($_GET['d'] == 6) $col="STRTIME({$colT1}) {$ord}";
-else if($_GET['d'] == 7) $col="STRTIME({$colT2}) {$ord}";
-else if($_GET['d'] == 8) $col="{$colIp} {$ord}, REVERSE({$colUrl}) {$ord}";
-else $col="{$colHit}";
+	 if($_GET['d'] == 1) $col="REVERSE({$colUrl}) {$ord}";
+else if($_GET['d'] == 2) $col="LENGTH({$colUrl}) {$ord}";
+else if($_GET['d'] == 3) $col="{$colUrl} {$ord}";
+else if($_GET['d'] == 4) $col="{$colOp} {$ord}, REVERSE({$colUrl}) {$ord}";
+else $col="REVERSE({$colUrl}) {$ord}";
 
 
 $qOrder = "ORDER BY $col";
 
 
-if($_GET['b'] == 1){
+$n++;
+$qLimit = "LIMIT $n";
 
-	if($_GET['a']==1) $qCount = "WHERE ({$colHit} > $n)";
-	else $qCount = "WHERE ({$colHit} > $n) AND";
+	 if($_GET['a'] == 1) $q = "{$qField} {$qOrder} {$qLimit}";
+else if($_GET['a'] == 2) $q = "{$qField} WHERE {$qBlockedAuto} {$qOrder} {$qLimit}";
+else if($_GET['a'] == 3) $q = "{$qField} WHERE {$qBlockedCustom} {$qOrder} {$qLimit}";
+else $q = "{$qField} {$qOrder} {$qLimit}";
 
-		 if($_GET['a'] == 1) $q = "{$qField} {$qCount} {$qOrder}";
-	else if($_GET['a'] == 2) $q = "{$qField} {$qCount} {$qUnblockedOnly} {$qOrder}";
-	else if($_GET['a'] == 3) $q = "{$qField} {$qCount} {$qBlockedOnly} {$qOrder}";
-	else if($_GET['a'] == 4) $q = "{$qField} {$qCount} {$qBlockedAuto} {$qOrder}";
-	else if($_GET['a'] == 5) $q = "{$qField} {$qCount} {$qBlockedCustom} {$qOrder}";
-	else $q = "{$qField} {$qCount} {$qOrder}";
-
-
-}
-else{
-
-	$n++;
-	$qLimit = "LIMIT $n";
-
-		 if($_GET['a'] == 1) $q = "{$qField} {$qOrder} {$qLimit}";
-	else if($_GET['a'] == 2) $q = "{$qField} WHERE {$qUnblockedOnly} {$qOrder} {$qLimit}";
-	else if($_GET['a'] == 3) $q = "{$qField} WHERE {$qBlockedOnly} {$qOrder} {$qLimit}";
-	else if($_GET['a'] == 4) $q = "{$qField} WHERE {$qBlockedAuto} {$qOrder} {$qLimit}";
-	else if($_GET['a'] == 5) $q = "{$qField} WHERE {$qBlockedCustom} {$qOrder} {$qLimit}";
-	else if($_GET['a'] == 6){
-
-		 $subQ = "SELECT SUM({$colHit}) AS 'hit', '*.' || TOPDOMAIN({$colUrl}) AS 'url', {$colOp} AS 'op', {$colIp} AS 'ip', {$colT1} AS 't1', {$colT2} AS 't2' FROM {$tblDns} GROUP BY TOPDOMAIN({$colUrl}) {$qLimit}";
-
-		 $q = "SELECT * FROM ({$subQ}) {$qOrder}";
-
-	}
-	else $q = "{$qField} {$qOrder} {$qLimit}";
-
-}
 
 $db->sqliteCreateFunction('REVERSE', 'strrev', 1);
-$db->sqliteCreateFunction('STRTIME', 'strtotime', 1);
-$db->sqliteCreateFunction('TOPDOMAIN', 'top_domain', 1);
 
-//if($_GET['a']==6){ echo "<pre>{$q}</pre>"; exit();}
+// echo "<pre>{$q}</pre>"; exit();
 
 $res = $db->query($q);
 
@@ -394,7 +320,7 @@ if($res==false){
 }
 
 echo '<table class="tbl">';
-echo "<tr><td>HIT</td><td>OP *</td><td>URL</td><td>Actions</td><td>FIRST<br/>REQUEST (T1)</td><td>LAST<br/>REQUEST (T2)</td><td>LAST IP</td></tr>{$eol}";
+echo "<tr><td>OP *</td><td>URL</td><td>Actions</td></tr>{$eol}";
 
 $row = $res->fetch();
 while($row){
@@ -408,22 +334,10 @@ while($row){
 		$alter=TRUE;
 	}
 
-	// HIT COLUMN
-	$o .= "<td>{$row['hit']}</td>";
-
 	// OP COLUMN
-	$o .= '<td class="cnt">';
-		if($row['op']>0){
-
-			$o .= '<p class="blk">';
-			$o .= $row['op'];
-			$o .= '</p>';
-		}
-		else{
-
-			$o .= '<p class="ublk"></p>';
-		}
-	$o .= '</td>';
+	$o .= '<td class="cnt"><p class="blk">';
+	$o .= $row['op'];
+	$o .= '</p></td>';
 
 
 	// URL COLUMN
@@ -454,10 +368,7 @@ while($row){
 		$o .= '" target="_blank">';
 		$o .= '</a>';
 
-	$o .= '</td>';
-
-	// T1, T2 AND IP COLUMN
-	$o .= "<td>{$row['t1']}</td><td>{$row['t2']}</td><td>{$row['ip']}</td></tr>{$eol}";
+	$o .= "</td></tr>{$eol}";
 
 	echo $o;
 

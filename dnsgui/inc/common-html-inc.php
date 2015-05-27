@@ -4,13 +4,17 @@ function TopNavHtml($pg){
 
 	$s  = '<div class="TopNav01"><ul><li><p>Navigation:</p></li>';
 
-	if($pg==1) $s .= '<li><a class="sel" href="index.php">';
-	else 	   $s .= '<li><a href="index.php">';
-			   $s .= 'System Infomation</a></li>';
+	$s .= '<li><a';
+	if($pg==1) $s .= ' class="sel"';
+	$s .= ' href="index.php">System Infomation</a></li>';
 
-	if($pg==2) $s .= '<li><a class="sel" href="viewlog.php">';
-	else 	   $s .= '<li><a href="viewlog.php">';
-			   $s .= 'View DNS Logs</a></li>';
+	$s .= '<li><a';
+	if($pg==2) $s .= ' class="sel"';
+	$s .= '  href="viewlog.php">View DNS Logs</a></li>';
+
+	$s .= '<li><a';
+	if($pg==3) $s .= ' class="sel"';
+	$s .= ' href="viewlist.php">View Block Lists</a></li>';
 
 	$s .= '</ul></div>';
 
