@@ -14,87 +14,76 @@ global $colIp;
 global $colOp;
 global $phpsudotaskfile;
 global $dnslogfile;
+global $sessionPath;
+global $adlistfile;
+global $adlistCustomfile;
+global $dnslogfile;
 
-
+session_save_path($sessionPath);
 
 if(isset($_GET['a'])){
+
+	$msg = '';
 
 	if($_GET['a']==1){
 
 		//restart dnsmasq daemon
-		exec("sudo {$phpsudotaskfile} --restart-dnsmasq");
-		sleep(1);
-
-		header('Location: index.php');
+		$msg  = "Task: Restart dnsmasq daemon{$eol}";
+		exec("sudo {$phpsudotaskfile} --restart-dnsmasq", $s);
+		if(is_array($s)) { $msg .= implode("\n",$s); }
 
 	}
 	else if($_GET['a']==4){
+		// Export Auto-List
 
 		require('./inc/blocklist-conf-inc.php');
+		$msg  = "Task: Export Auto-List to file: {$adlistfile}{$eol}";
+		$msg .= ExportConfAutolist();
 
-		// Sending reloading header causes the client browser to
-		// reload a fresh index.php page while rest of this script
-		// continue executing in background on the server.
-		// this makes the client browser feel more responsive.
-		// also cleans up the unwanted url params from browser url-bar
-		header('Location: index.php');
-
-		// Export Auto-List
-		ExportConfAutolist();
 	}
 	else if($_GET['a']==5){
+		// Export Custom-List
 
 		require('./inc/blocklist-conf-inc.php');
-
-		header('Location: index.php');
-
-		// Export Custom-List
-		ExportConfCustomlist();
+		$msg  = "Task: Export Custom-List to file: {$adlistCustomfile}{$eol}";
+		$msg .= ExportConfCustomlist();
 	}
 	else if($_GET['a']==6){
+		// Export Both Auto-List and Custom-List
 
 		require('./inc/blocklist-conf-inc.php');
-
-		header('Location: index.php');
-
-		// Export Both Auto-List and Custom-List
-		ExportConfBothlist();
+		$msg  = "Task 1: Export Auto-List to file: {$adlistfile}{$eol}";
+		$msg .= "Task 2: Export Custom-List to file: {$adlistCustomfile}{$eol}";
+		$msg .= ExportConfBothlist();
 	}
 	else if($_GET['a']==7){
+		// Import Auto-List
 
 		require('./inc/blocklist-conf-inc.php');
-
-		header('Location: index.php');
-
-		// Import Auto-List
-		ImportConfAutolist();
+		$msg  = "Task: Import Auto-List from file: {$adlistfile}{$eol}";
+		$msg .= ImportConfAutolist();
 	}
 	else if($_GET['a']==8){
+		// Import Custom-List
 
 		require('./inc/blocklist-conf-inc.php');
-
-		header('Location: index.php');
-
-		// Import Custom-List
-		ImportConfCustomlist();
+		$msg  = "Task: Import Custom-List from file: {$adlistCustomfile}{$eol}";
+		$msg .= ImportConfCustomlist();
 	}
 	else if($_GET['a']==9){
 
-		require('./inc/blocklist-conf-inc.php');
-
-		header('Location: index.php');
-
 		// Import Both Auto-List and Custom-List
-		ImportConfBothlist();
+		require('./inc/blocklist-conf-inc.php');
+		$msg  = "Task 1: Import Auto-List from file: {$adlistfile}{$eol}";
+		$msg .= "Task 2: Import Custom-List from file: {$adlistCustomfile}{$eol}";
+		$msg .= ImportConfBothlist();
 	}
 	else if($_GET['a']==10){
+		// Import DNS Log
 
 		require('./inc/update-db-dnslog-inc.php');
-
-		header('Location: index.php');
-
-		// Import DNS Log
-		$msg = ImportDnsmasqLog();
+		$msg  = "Task: Import dnsmasq's log from file: {$dnslogfile}{$eol}";
+		$msg .= ImportDnsmasqLog();
 		$f = fopen($dnslogfile, 'w');
 		if($f!=FALSE){
 			fwrite($f, $msg);
@@ -102,7 +91,24 @@ if(isset($_GET['a'])){
 		}
 	}
 
+	if(session_id()==''){
+
+		// start a new session
+		session_start();
+
+		$_SESSION['msg']=$msg;
+		$_SESSION['viewCount']=0;
+	}
+
+	// Sending reloading header causes the client browser to
+	// reload a fresh index.php page and cleans up the unwanted url
+	// params from browser url-bar. session veriables will ensure that
+	// user is displayed with the output from the task excuted above
+	// when the new index.php page loads.
+
+	header('Location: index.php');
 	exit();
+
 }
 
 ?>
@@ -147,6 +153,22 @@ if(isset($_GET['a'])){
 <br/>
 <?php
 
+if(session_id()==''){
+
+	session_start();
+
+	if(isset($_SESSION['msg']) && strlen($_SESSION['msg'])>0 && $_SESSION['viewCount']==0){
+
+			echo 'Output:<div class="tx">';
+			echo $_SESSION['msg'];
+			echo '</div><br/>';
+
+			$_SESSION['viewCount']++;
+	}
+
+	session_unset();
+	session_destroy();
+}
 
 function strtime($t){
 

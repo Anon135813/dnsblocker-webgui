@@ -109,6 +109,7 @@ function ImportConf($fn, $op){
 	global $eol;
 
 	$msg = "Starting Import 'op'={$op}, file: {$fn}{$eol}";
+	$msg_entry_ignored = '';
 
 	$db = null;
 	$lines = null;
@@ -168,11 +169,12 @@ function ImportConf($fn, $op){
 
 	try {
 		$db = new PDO('sqlite:' . $dbfile);
-		//$msg .= "SUCESSFULLY OPEN DATABASE FILE!{$eol}";
+		$msg .= "SUCESSFULLY OPEN DATABASE FILE!{$eol}";
 	}
 	catch(PDOException $e){
-		echo "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
-		exit();
+		$msg .= "FAIL TO OPEN DATABASE FILE!{$eol}" . $e->getMessage();
+		//exit();
+		return $msg;
 	}
 
 	// attempts to speed up sqlite inserts with the cost of:
@@ -217,7 +219,7 @@ function ImportConf($fn, $op){
 
 		// if an existing block entry is found
 		if($row['ENTRYCOUNT']>0){
-			$msg .= "Duplicate or redundent entry. Entry Ignored: [{$url}] Conflicts With: [{$row['url']}]{$eol}";
+			$msg_entry_ignored .= "Entry Ignored: [{$url}] Existing Entry Found: [{$row['url']}] (Duplicate or redundent entry){$eol}";
 			$ignoredEntry++;
 			continue;
 		}
@@ -241,10 +243,11 @@ function ImportConf($fn, $op){
 
 	$scriptTime = round((microtime(true)-$scriptTime),4);
 
-	$msg .= "Completed Import 'op'={$op}, file: {$fn}{$eol}";
 	$msg .= "Entries Entred: {$newEntry} Entries{$eol}";
 	$msg .= "Entries Ignored: {$ignoredEntry} Entries{$eol}";
 	$msg .= "Time Spend: {$scriptTime} Seconds{$eol}";
+	$msg .= $msg_entry_ignored;
+	$msg .= "Completed Import 'op'={$op}, file: {$fn}{$eol}";
 
 	return $msg;
 }

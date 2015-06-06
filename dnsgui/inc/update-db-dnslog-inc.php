@@ -48,8 +48,6 @@ function ImportDnsmasqLog(){
 	$updateCount = 0;
 
 	$msg .= "==============================================={$eol}";
-	$msg .= "\t update-db-dnslog.php Messages{$eol}";
-	$msg .= "==============================================={$eol}";
 
 	// Get log file size via ls -lh
 	exec("ls -lh {$dnslogfile}", $a1);

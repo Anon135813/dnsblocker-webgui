@@ -6,11 +6,6 @@
 // this will be use to generate the block list ".conf" files
 $GLOBALS['hostaddress'] = '192.168.1.8';
 
-// database filename and location path.
-$GLOBALS['dbpath'] 		= '/var/www/dnsgui/inc/db/';
-$GLOBALS['dbfilename'] 	= 'dnslog.db';
-$GLOBALS['dbfile'] 		= $GLOBALS['dbpath'] . $GLOBALS['dbfilename'];
-
 // database table names
 $GLOBALS['tblBlk'] 	= '"blocklist"';
 $GLOBALS['tblDns']	= '"dnslog"';
@@ -23,28 +18,25 @@ $GLOBALS['colHit']	= '"hit"';
 $GLOBALS['colIp']	= '"ip"';
 $GLOBALS['colOp']	= '"op"';
 
+// database filename and location path.
+$GLOBALS['dbfile'] 	= '/var/www/dnsgui/inc/db/dnslog.db';
 
 // dnsmasq logfile name and location path.
-$GLOBALS['dnslogpath'] 		= '/mnt/ramdisk/';
-$GLOBALS['dnslogfilename'] 	= 'dnsmasq-log.txt';
-$GLOBALS['dnslogfile']	 	= $GLOBALS['dnslogpath'] . $GLOBALS['dnslogfilename'];
+$GLOBALS['dnslogfile']	= '/mnt/ramdisk/dnsmasq-log.txt';
 
 // dnsblocker-phpsudotask.sh script location
-$GLOBALS['phpsudotaskpath'] 	= '/home/pi/';
-$GLOBALS['phpsudotaskfilename'] = 'dnsblocker-phpsudotask.sh';
-$GLOBALS['phpsudotaskfile'] 	= $GLOBALS['phpsudotaskpath'] . $GLOBALS['phpsudotaskfilename'];
+$GLOBALS['phpsudotaskfile'] = '/home/pi/dnsblocker-phpsudotask.sh';
 
 
 // filename and location of the auto-list
-$GLOBALS['adlistpath']		= '/etc/dnsmasq.d/';
-$GLOBALS['adlistfilename']	= 'adlist.conf';
-$GLOBALS['adlistfile']		= $GLOBALS['adlistpath'] . $GLOBALS['adlistfilename'];
+$GLOBALS['adlistfile'] = '/etc/dnsmasq.d/adlist.conf';
 
 // filename and the location of the custom-list
-$GLOBALS['adlistCustompath']		= '/etc/dnsmasq.d/';
-$GLOBALS['adlistCustomfilename']	= 'adlist-custom.conf';
-$GLOBALS['adlistCustomfile']		= $GLOBALS['adlistCustompath'] . $GLOBALS['adlistCustomfilename'];
+$GLOBALS['adlistCustomfile'] = '/etc/dnsmasq.d/adlist-custom.conf';
 
+
+// location for php session file/server cockie store
+$GLOBALS['sessionPath'] = '/mnt/ramdisk/';
 
 // sometimes helps when php project are cross platform.
 $GLOBALS['eol'] = "\n";
