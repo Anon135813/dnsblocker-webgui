@@ -1,5 +1,17 @@
 # dnsblocker-webgui
 <p>This is an attempt to create a WebGui for blocking and unblocking network traffic via intercepting DNS request using the linux daemon dnsmasq.</p>
+
+<p>A demo of the DNS Blocker WebGui at: <a href="http://www.findnear.info/dnsgui/viewlog.php">http://www.findnear.info/dnsgui/viewlog.php</a><br/>
+A blog about the DNS Blocker WebGui at: <a href="http://jacobsalmela.com/a-web-interface-for-the-ad-blocking-pi-hole/">http://jacobsalmela.com/a-web-interface-for-the-ad-blocking-pi-hole/</a><br/>
+<br/>
+<br/>
+Some Related Pi-Hole Project links:
+<br/>
+<a href="http://jacobsalmela.com/raspberry-pi-block-ads-adtrap/">http://jacobsalmela.com/raspberry-pi-block-ads-adtrap/</a><br/>
+<a href="http://jacobsalmela.com/blocking-ads-from-120000-domains/">http://jacobsalmela.com/blocking-ads-from-120000-domains/</a><br/>
+<a href="http://jacobsalmela.com/huge-update-to-ad-list-that-the-pi-hole-uses/">http://jacobsalmela.com/huge-update-to-ad-list-that-the-pi-hole-uses/</a><br/>
+<a href="https://github.com/jacobsalmela/pi-hole">https://github.com/jacobsalmela/pi-hole</a></p>
+
 <p>TODO List:</p>
 <ul>
 	<li>Issue 1 and 2</li>
@@ -10,7 +22,7 @@
 			<li>[DONE] Createing a small (5/10MB) ramdrive for Raspberry PI users for dnsmasq continuous log.</li>
 			<li>[DONE] Config dnsmasq to log query.</li>
 			<li>[DONE] Setting up cron job to run dnsgui/inc/update-db-dnslog.php to update the dnslog.db every 30 min.</li>
-			<li>Add a sudoer entry for www-data user for "(usr/sbin?)/dnsblocker-phpsudotask.sh" in </li>
+			<li>[DONE] Add a sudoer entry for www-data user for "(usr/sbin?)/dnsblocker-phpsudotask.sh" in </li>
 		</ul>
 	</li>
 </ul>
@@ -61,26 +73,32 @@ ip = ip address of the last holt requested dns query about the given url
 
 <h2>About the "dnsgui\" directory and setting up webgui</h2>
 <pre>
-dnsgui/
-├── css
-│   └── dnsblocker-webgui-style-01.css
-├── img
-│   ├── block-icon-color1.png
-│   ├── checkbox-color1.gif
-│   ├── circle-green1.png
-│   ├── circle-red1.png
-│   ├── search-icon-color2.png
-│   └── unblock-icon-color1.png
-├── inc
-│   ├── dnslog.db
-│   ├── global-var-inc.php
-│   ├── update-blocklist-conf-files.php
-│   ├── update-db-blocklist.php
-│   └── update-db-dnslog.php
-├── index.php
-├── modlist.php
-├── test.php
-└── viewlog.php
+├── dnsgui
+│   ├── css
+│   │   └── dnsblocker-webgui-style-01.css
+│   ├── img
+│   │   ├── block-icon-color1.png
+│   │   ├── checkbox-color1.gif
+│   │   ├── circle-green1.png
+│   │   ├── circle-red1.png
+│   │   ├── search-icon-color2.png
+│   │   └── unblock-icon-color1.png
+│   ├── inc
+│   │   ├── blocklist-conf-inc.php
+│   │   ├── common-html-inc.php
+│   │   ├── db
+│   │   │   └── dnslog.db
+│   │   ├── global-var-inc.php
+│   │   ├── update-db-dnslog-inc.php
+│   │   └── update-db-dnslog.php
+│   ├── index.php
+│   ├── modlist.php
+│   ├── test.php
+│   ├── viewlist.php
+│   └── viewlog.php
+├── LICENSE
+├── project-files.txt
+└── README.md
 </pre>
 <p>The directory "dnsgui/" needs to be put inside your webservers "document-root" directory. In my case, on a default lighttpd install it was '/var/www'. You can find your document-root directory true location in /etc/lighttpd.d/lighttpd.conf file.</p>
 
